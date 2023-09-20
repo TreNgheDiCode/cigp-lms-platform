@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import {
   Form,
@@ -14,18 +15,18 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { formTitleSchema } from "../constants";
-import toast from "react-hot-toast";
+import { formDescriptionSchema } from "../constants";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
 
 interface TitleFormProps {
-  title: string;
+  description: string | null;
   courseId: string;
 }
 
-const TitleForm = ({ title, courseId }: TitleFormProps) => {
+const DescriptionForm = ({ description, courseId }: TitleFormProps) => {
   const router = useRouter();
 
   const [isEditting, setIsEditting] = useState(false);
@@ -34,16 +35,16 @@ const TitleForm = ({ title, courseId }: TitleFormProps) => {
     setIsEditting((current) => !current);
   };
 
-  const form = useForm<z.infer<typeof formTitleSchema>>({
-    resolver: zodResolver(formTitleSchema),
+  const form = useForm<z.infer<typeof formDescriptionSchema>>({
+    resolver: zodResolver(formDescriptionSchema),
     defaultValues: {
-      title: "",
+      description: "",
     },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formTitleSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formDescriptionSchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Cập nhật thành công");
@@ -59,7 +60,7 @@ const TitleForm = ({ title, courseId }: TitleFormProps) => {
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Tên khóa học
+        Mô tả khóa học
         <Button onClick={toggleEdit} variant={"ghost"}>
           {isEditting ? (
             <>Hủy</>
@@ -72,7 +73,14 @@ const TitleForm = ({ title, courseId }: TitleFormProps) => {
         </Button>
       </div>
       {!isEditting ? (
-        <p className="text-sm mt-2">{title}</p>
+        <p
+          className={cn(
+            "text-sm mt-2",
+            !description && "text-slate-500 italic"
+          )}
+        >
+          {description || "Không có mô tả"}
+        </p>
       ) : (
         <Form {...form}>
           <form
@@ -81,13 +89,13 @@ const TitleForm = ({ title, courseId }: TitleFormProps) => {
           >
             <FormField
               control={form.control}
-              name="title"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
+                    <Textarea
                       disabled={isSubmitting}
-                      placeholder="Vd: Khóa học lập trình di động từ cơ bản đến nâng cao"
+                      placeholder="Vd: Sử dụng các kiến thức cơ bản nhất trong việc lập trình để trau dồi và tăng cao kiến thức về mobile..."
                       {...field}
                     />
                   </FormControl>
@@ -107,4 +115,4 @@ const TitleForm = ({ title, courseId }: TitleFormProps) => {
   );
 };
 
-export default TitleForm;
+export default DescriptionForm;
