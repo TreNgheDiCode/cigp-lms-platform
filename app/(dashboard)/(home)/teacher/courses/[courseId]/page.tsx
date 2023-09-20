@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
 import { LayoutDashboard } from "lucide-react";
 import { redirect } from "next/navigation";
+import TitleForm from "./_components/title-form";
 
 const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const { userId } = auth();
@@ -11,9 +12,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
     return redirect("/");
   }
 
-  const validId = params.courseId.length === 24;
-
-  if (!validId) {
+  if (params.courseId.length !== 24) {
     return redirect("/");
   }
 
@@ -55,6 +54,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
             <IconBadge icon={LayoutDashboard} />
             <h2 className="text-xl">Cập nhật thông tin khóa học của bạn</h2>
           </div>
+          <TitleForm title={course.title} courseId={course.id} />
         </div>
       </div>
     </div>
