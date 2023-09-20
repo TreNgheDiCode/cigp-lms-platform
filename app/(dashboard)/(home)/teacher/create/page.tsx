@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 import {
   Form,
@@ -35,9 +36,10 @@ const CreatePage = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const response = await axios.post("/api/course", values);
+      const response = await axios.post("/api/courses", values);
 
       router.push(`/teacher/courses/${response.data.id}`);
+      toast.success("Tạo khóa học thành công");
     } catch (error) {
       console.log(error);
       toast.error("Tạo khóa học thất bại");
@@ -46,6 +48,14 @@ const CreatePage = () => {
       router.refresh();
     }
   };
+
+  const [mounted, isMounted] = useState(false);
+
+  useEffect(() => {
+    isMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <div className="max-w-5xl mx-auto flex md:items-center md:justify-center h-full p-6">
