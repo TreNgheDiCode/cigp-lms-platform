@@ -11,3 +11,9 @@ export const formDescriptionSchema = z.object({
     message: "Yêu cầu nhập mô tả khóa học",
   }),
 });
+
+export const formImageSchema = z.object({
+  imageUrl: z.string().min(1, {
+    message: "Yêu cầu chọn một hình ảnh",
+  }),
+});

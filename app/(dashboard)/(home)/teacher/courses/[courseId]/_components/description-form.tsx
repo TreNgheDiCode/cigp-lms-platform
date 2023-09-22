@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 
 interface TitleFormProps {
-  description: string | null;
+  description?: string;
   courseId: string;
 }
 
@@ -38,7 +38,7 @@ const DescriptionForm = ({ description, courseId }: TitleFormProps) => {
   const form = useForm<z.infer<typeof formDescriptionSchema>>({
     resolver: zodResolver(formDescriptionSchema),
     defaultValues: {
-      description: "",
+      description: description || "",
     },
   });
 
