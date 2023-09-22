@@ -16,17 +16,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { formDescriptionSchema } from "../constants";
+import { formCategorySchema } from "../constants";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
+import { Combobox } from "@/components/ui/combobox";
 
-interface DescriptionFormProps {
-  description?: string;
+interface CategoryFormProps {
+  categoryId?: string;
   courseId: string;
+  options: { label: string; value: string }[];
 }
 
-const DescriptionForm = ({ description, courseId }: DescriptionFormProps) => {
+const CategoryForm = ({ categoryId, courseId, options }: CategoryFormProps) => {
   const router = useRouter();
 
   const [isEditting, setIsEditting] = useState(false);
@@ -35,16 +37,16 @@ const DescriptionForm = ({ description, courseId }: DescriptionFormProps) => {
     setIsEditting((current) => !current);
   };
 
-  const form = useForm<z.infer<typeof formDescriptionSchema>>({
-    resolver: zodResolver(formDescriptionSchema),
+  const form = useForm<z.infer<typeof formCategorySchema>>({
+    resolver: zodResolver(formCategorySchema),
     defaultValues: {
-      description: description || "",
+      categoryId: categoryId || "",
     },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
-  const onSubmit = async (values: z.infer<typeof formDescriptionSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formCategorySchema>) => {
     try {
       await axios.patch(`/api/courses/${courseId}`, values);
       toast.success("Cập nhật thành công");
@@ -57,10 +59,12 @@ const DescriptionForm = ({ description, courseId }: DescriptionFormProps) => {
     }
   };
 
+  const selectedOption = options.find((option) => option.value === categoryId);
+
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Mô tả khóa học
+        Bộ môn
         <Button onClick={toggleEdit} variant={"ghost"}>
           {isEditting ? (
             <>Hủy</>
@@ -74,12 +78,9 @@ const DescriptionForm = ({ description, courseId }: DescriptionFormProps) => {
       </div>
       {!isEditting ? (
         <p
-          className={cn(
-            "text-sm mt-2",
-            !description && "text-slate-500 italic"
-          )}
+          className={cn("text-sm mt-2", !categoryId && "text-slate-500 italic")}
         >
-          {description || "Không có mô tả"}
+          {selectedOption?.label || "Không có thể loại"}
         </p>
       ) : (
         <Form {...form}>
@@ -89,15 +90,11 @@ const DescriptionForm = ({ description, courseId }: DescriptionFormProps) => {
           >
             <FormField
               control={form.control}
-              name="description"
+              name="categoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea
-                      disabled={isSubmitting}
-                      placeholder="Vd: Sử dụng các kiến thức cơ bản nhất trong việc lập trình để trau dồi và tăng cao kiến thức về mobile..."
-                      {...field}
-                    />
+                    <Combobox options={...options} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,4 +112,4 @@ const DescriptionForm = ({ description, courseId }: DescriptionFormProps) => {
   );
 };
 
-export default DescriptionForm;
+export default CategoryForm;

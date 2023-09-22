@@ -17,3 +17,9 @@ export const formImageSchema = z.object({
     message: "Yêu cầu chọn một hình ảnh",
   }),
 });
+
+export const formCategorySchema = z.object({
+  categoryId: z.string().min(1, {
+    message: "Yêu cầu chọn tùy chọn",
+  }),
+});

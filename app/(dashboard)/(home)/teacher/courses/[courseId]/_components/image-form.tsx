@@ -12,12 +12,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FileUpload from "@/components/file-upload";
 
-interface TitleFormProps {
+interface ImageFormProps {
   imageUrl: string | null;
   courseId: string;
 }
 
-const ImageForm = ({ imageUrl, courseId }: TitleFormProps) => {
+const ImageForm = ({ imageUrl, courseId }: ImageFormProps) => {
   const router = useRouter();
 
   const [isEditting, setIsEditting] = useState(false);
