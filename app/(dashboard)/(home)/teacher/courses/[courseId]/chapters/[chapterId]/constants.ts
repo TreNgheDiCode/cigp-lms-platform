@@ -11,3 +11,7 @@ export const formDescriptionSchema = z.object({
     message: "Yêu cầu nhập mô tả bài giảng",
   }),
 });
+
+export const formAccessSchema = z.object({
+  isFree: z.boolean().default(false),
+});
