@@ -15,3 +15,7 @@ export const formDescriptionSchema = z.object({
 export const formAccessSchema = z.object({
   isFree: z.boolean().default(false),
 });
+
+export const formVideoSchema = z.object({
+  videoUrl: z.string().min(1),
+});
