@@ -27,3 +27,7 @@ export const formCategorySchema = z.object({
 export const formPriceSchema = z.object({
   price: z.coerce.number(),
 });
+
+export const formAttachmentSchema = z.object({
+  url: z.string().min(1),
+});

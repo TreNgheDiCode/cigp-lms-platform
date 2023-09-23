@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { formPriceSchema } from "../constants";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/format";
 
@@ -52,7 +51,7 @@ const PriceForm = ({ price, courseId }: PriceFormProps) => {
       toast.success("Cập nhật thành công");
       toggleEdit();
     } catch (error) {
-      toast.error("Cập nhật tên khóa học thất bại");
+      toast.error("Cập nhật khóa học thất bại");
     } finally {
       router.refresh();
       form.reset();

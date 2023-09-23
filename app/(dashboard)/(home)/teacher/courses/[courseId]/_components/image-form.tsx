@@ -32,7 +32,7 @@ const ImageForm = ({ imageUrl, courseId }: ImageFormProps) => {
       toast.success("Cập nhật thành công");
       toggleEdit();
     } catch (error) {
-      toast.error("Cập nhật tên khóa học thất bại");
+      toast.error("Cập nhật khóa học thất bại");
     } finally {
       router.refresh();
     }
