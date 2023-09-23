@@ -14,6 +14,7 @@ import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
+import ChapterForm from "./_components/chapter-form";
 
 const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const { userId } = auth();
@@ -32,6 +33,11 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
       userId,
     },
     include: {
+      chapters: {
+        orderBy: {
+          position: "asc",
+        },
+      },
       attachments: {
         orderBy: {
           createdAt: "desc",
@@ -55,6 +61,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
     course.imageUrl,
     course.price,
     course.categoryId,
+    course.chapters.some((chapter) => chapter.isPublished),
   ];
 
   const totalFields = requiredFields.length;
@@ -75,7 +82,7 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
         <div>
           <div className="flex items-center gap-x-2">
             <IconBadge icon={LayoutDashboard} />
-            <h2 className="text-xl">Cập nhật thông tin khóa học của bạn</h2>
+            <h2 className="text-xl">Cập nhật thông tin </h2>
           </div>
           <TitleForm title={course.title} courseId={course.id} />
           <DescriptionForm
@@ -98,19 +105,19 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
               <IconBadge icon={ListChecks} />
               <h2 className="text-xl">Bài giảng</h2>
             </div>
-            <div>TODO: Chapters</div>
+            <ChapterForm initialData={course} courseId={course.id} />
           </div>
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={CircleDollarSign} />
-              <h2 className="text-xl">Bán khóa học của bạn</h2>
+              <h2 className="text-xl">Kinh phí</h2>
             </div>
             <PriceForm price={course.price!} courseId={course.id} />
           </div>
           <div>
             <div className="flex items-center gap-x-2">
               <IconBadge icon={File} />
-              <h2 className="text-xl">Tài nguyên khóa học</h2>
+              <h2 className="text-xl">Tài nguyên</h2>
             </div>
             <AttachmentForm initialData={course} courseId={course.id} />
           </div>

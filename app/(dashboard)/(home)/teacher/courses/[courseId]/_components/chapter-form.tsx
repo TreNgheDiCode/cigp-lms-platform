@@ -1,0 +1,128 @@
+"use client";
+
+import * as z from "zod";
+import axios from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { PlusCircle } from "lucide-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { formChapterSchema } from "../constants";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Textarea } from "@/components/ui/textarea";
+import { Chapter, Course } from "@prisma/client";
+import { Input } from "@/components/ui/input";
+
+interface ChapterFormProps {
+  initialData: Course & { chapters: Chapter[] };
+  courseId: string;
+}
+
+const ChapterForm = ({ initialData, courseId }: ChapterFormProps) => {
+  const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const toggleCreating = () => {
+    setIsCreating((current) => !current);
+  };
+
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof formChapterSchema>>({
+    resolver: zodResolver(formChapterSchema),
+    defaultValues: {
+      title: "",
+    },
+  });
+
+  const { isSubmitting, isValid } = form.formState;
+
+  const onSubmit = async (values: z.infer<typeof formChapterSchema>) => {
+    try {
+      await axios.post(`/api/courses/${courseId}/chapters`, values);
+      toast.success("Thêm bài giảng thành công");
+      toggleCreating();
+    } catch (error) {
+      toast.error("Thêm bài giảng thất bại");
+    } finally {
+      router.refresh();
+      form.reset();
+    }
+  };
+
+  return (
+    <div className="mt-6 border bg-slate-100 rounded-md p-4">
+      <div className="font-medium flex items-center justify-between">
+        Bài giảng khóa học
+        <Button onClick={toggleCreating} variant={"ghost"}>
+          {isCreating ? (
+            <>Hủy</>
+          ) : (
+            <>
+              <PlusCircle className="h-4 w-4 mr-2" />
+              Thêm bài giảng
+            </>
+          )}
+        </Button>
+      </div>
+      {isCreating && (
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 mt-4"
+          >
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      disabled={isSubmitting}
+                      placeholder="Vd: Bài khởi đầu"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex items-center gap-x-2">
+              <Button disabled={isSubmitting || !isValid} type="submit">
+                Thêm
+              </Button>
+            </div>
+          </form>
+        </Form>
+      )}
+      {!isCreating && (
+        <div
+          className={cn(
+            "text-sm mt-2",
+            !initialData.chapters.length && "text-slate-500 italic"
+          )}
+        >
+          {!initialData.chapters.length && "Không có bài giảng"}
+          {/* Thêm danh sách bài giảng */}
+        </div>
+      )}
+      {!isCreating && initialData.chapters.length > 0 && (
+        <p className="text-xs text-muted-foreground mt-4">
+          Nhấn giữ và kéo thả để thay đổi thứ tự bài giảng
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default ChapterForm;

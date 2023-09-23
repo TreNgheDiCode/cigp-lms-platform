@@ -53,7 +53,7 @@ const ImageForm = ({ imageUrl, courseId }: ImageFormProps) => {
           {!isEditting && imageUrl && (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Chỉnh sửa
+              Chọn hình ảnh
             </>
           )}
         </Button>

@@ -31,3 +31,7 @@ export const formPriceSchema = z.object({
 export const formAttachmentSchema = z.object({
   url: z.string().min(1),
 });
+
+export const formChapterSchema = z.object({
+  title: z.string().min(1),
+});
