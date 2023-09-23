@@ -23,3 +23,7 @@ export const formCategorySchema = z.object({
     message: "Yêu cầu chọn tùy chọn",
   }),
 });
+
+export const formPriceSchema = z.object({
+  price: z.coerce.number(),
+});
