@@ -15,6 +15,8 @@ import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
 import AttachmentForm from "./_components/attachment-form";
 import ChapterForm from "./_components/chapter-form";
+import Banner from "@/components/banner";
+import { Actions } from "./_components/actions";
 
 const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const { userId } = auth();
@@ -69,61 +71,77 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
 
   const completionText = `(${completedFields}/${totalFields})`;
 
+  const isComplete = requiredFields.every(Boolean);
+
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between"></div>
-      <div className="flex flex-col gap-y-2">
-        <h1 className="text-2xl font-medium">Tùy chỉnh khóa học</h1>
-        <span className="text-sm text-slate-700">
-          Điền thông tin các dòng {completionText}
-        </span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 mt-16">
-        <div>
-          <div className="flex items-center gap-x-2">
-            <IconBadge icon={LayoutDashboard} />
-            <h2 className="text-xl">Cập nhật thông tin </h2>
+    <>
+      {!course.isPublished && (
+        <Banner
+          variant={"warning"}
+          label="Khóa học chưa được công khai. Khóa học này sẽ không hiển thị trong trang người dùng."
+        />
+      )}
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-y-2">
+            <h1 className="text-2xl font-medium">Tùy chỉnh khóa học</h1>
+            <span className="text-sm text-slate-700">
+              Hoàn thành đầy đủ các thông tin {completionText}
+            </span>
           </div>
-          <TitleForm title={course.title} courseId={course.id} />
-          <DescriptionForm
-            description={course.description!}
-            courseId={course.id}
-          />
-          <ImageForm imageUrl={course.imageUrl} courseId={course.id} />
-          <CategoryForm
-            categoryId={course.categoryId!}
-            courseId={course.id}
-            options={(await categories).map((category) => ({
-              label: category.name,
-              value: category.id,
-            }))}
+          <Actions
+            disabled={!isComplete}
+            courseId={params.courseId}
+            isPublished={course.isPublished}
           />
         </div>
-        <div className="space-y-6 mt-6 md:mt-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 mt-16">
           <div>
             <div className="flex items-center gap-x-2">
-              <IconBadge icon={ListChecks} />
-              <h2 className="text-xl">Bài giảng</h2>
+              <IconBadge icon={LayoutDashboard} />
+              <h2 className="text-xl">Cập nhật thông tin </h2>
             </div>
-            <ChapterForm initialData={course} courseId={course.id} />
+            <TitleForm title={course.title} courseId={course.id} />
+            <DescriptionForm
+              description={course.description!}
+              courseId={course.id}
+            />
+            <ImageForm imageUrl={course.imageUrl} courseId={course.id} />
+            <CategoryForm
+              categoryId={course.categoryId!}
+              courseId={course.id}
+              options={(await categories).map((category) => ({
+                label: category.name,
+                value: category.id,
+              }))}
+            />
           </div>
-          <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={CircleDollarSign} />
-              <h2 className="text-xl">Kinh phí</h2>
+          <div className="space-y-6 mt-6 md:mt-0">
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={ListChecks} />
+                <h2 className="text-xl">Bài giảng</h2>
+              </div>
+              <ChapterForm initialData={course} courseId={course.id} />
             </div>
-            <PriceForm price={course.price!} courseId={course.id} />
-          </div>
-          <div>
-            <div className="flex items-center gap-x-2">
-              <IconBadge icon={File} />
-              <h2 className="text-xl">Tài nguyên</h2>
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={CircleDollarSign} />
+                <h2 className="text-xl">Kinh phí</h2>
+              </div>
+              <PriceForm price={course.price!} courseId={course.id} />
             </div>
-            <AttachmentForm initialData={course} courseId={course.id} />
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={File} />
+                <h2 className="text-xl">Tài nguyên</h2>
+              </div>
+              <AttachmentForm initialData={course} courseId={course.id} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
